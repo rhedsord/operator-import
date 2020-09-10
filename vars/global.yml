@@ -1,0 +1,9 @@
+
+redhat_operators: registry.redhat.io/openshift4/ose-operator-registry:v4.5
+community_operators: https://quay.io/repository/operator-framework/upstream-community-operators:latest
+local_version: v1
+local_registry: localhost:5000
+local_redhat_catalog: olm/community-operators:v1
+local_community_catalog: olm/community-operators:v1
+quay_auth: /root/.docker/auth.json
+

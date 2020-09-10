@@ -1,0 +1,26 @@
+#!/usr/local/bin/ansible-playbook --inventory=inventory
+
+- name: ' Konductor UPI '
+  hosts: local
+  vars_files:
+    - vars/global.yml
+
+  tasks:
+    - name: build Redhat catalog
+      shell: oc adm catalog build \
+        --appregistry-org redhat-operators \
+        --from={{ redhat_operators }} \
+        --filter-by-os="linux/amd64" \
+        --to={{ local_registry }}/{{ local_redhat_catalog }} \
+        -a {{ quay_auth }} \
+        --insecure
+
+    - name: build community catalog
+      shell: oc adm catalog build \
+        --appregistry-org community-operators \
+        --from={{ community_operators }} \
+        --filter-by-os="linux/amd64" \
+        --to={{ local_registry }}/{{ local_community_catalog }} \
+        -a {{ quay_auth }} \
+        --insecure
+
