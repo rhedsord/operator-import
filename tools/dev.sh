@@ -7,5 +7,4 @@ sudo podman run -it --rm \
     --entrypoint bash \
     --workdir /root/operator-import \
     --volume $(pwd):/root/operator-import:z \
-    --volume $(pwd)/docker/:/root/docker/:z \
   docker.io/codesparta/konductor
