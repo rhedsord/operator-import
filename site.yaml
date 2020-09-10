@@ -6,6 +6,16 @@
     - vars/global.yml
 
   tasks:
+    - name: Create auth directory
+      file:
+        path: /root/.docker
+        state: directory
+
+    - name: Create auth file
+      template:
+        src: templates/auth.json
+        dest: /root/.docker/auth.json
+
     - name: build Redhat catalog
       shell: oc adm catalog build \
         --appregistry-org redhat-operators \
@@ -24,3 +34,16 @@
         -a {{ quay_auth }} \
         --insecure
 
+    - name: Mirror Redhat catalog
+      shell: oc adm catalog mirror \
+        {{ local_registry }}/{{ local_redhat_catalog }} \
+        {{ local_registry }} \
+        -a {{ quay_auth }} \
+        --insecure
+
+    - name: Mirror community catalog
+      shell: oc adm catalog mirror \
+        {{ local_registry }}/{{ local_community_catalog }} \
+        {{ local_registry }} \
+        -a {{ quay_auth }} \
+        --insecure
