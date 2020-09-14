@@ -1,0 +1,32 @@
+#!/usr/local/bin/ansible-playbook --inventory=inventory
+
+- name: ' Operators '
+  hosts: local
+  vars_files:
+    - vars/global.yml
+
+  tasks:
+    - name: Create auth directory
+      file:
+        path: /root/.docker
+        state: directory
+
+    - name: Create auth file
+      template:
+        src: templates/auth.json
+        dest: /root/.docker/auth.json
+
+    - name: Mirror custom catalog images
+      shell: oc adm catalog mirror \
+        -a {{ quay_auth }} \
+        -f files/mapping.txt \
+        --insecure
+
+    - name: Patch Operator Hub
+      shell: oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
+
+    - name: Create catalog resource
+      shell: oc apply -f custom-catalog-resource.yaml
+
+    - name: Create image resource
+      shell: oc apply -f olm-iscp.yaml

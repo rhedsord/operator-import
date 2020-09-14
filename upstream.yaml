@@ -47,3 +47,27 @@
         {{ local_registry }} \
         -a {{ quay_auth }} \
         --insecure
+
+    - name: Patch operator hub
+      shell: oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
+
+    - name: create custom machineset
+      shell:  ""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
