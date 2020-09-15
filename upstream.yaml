@@ -48,11 +48,33 @@
         -a {{ quay_auth }} \
         --insecure
 
-    - name: Patch operator hub
-      shell: oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
+    - name: Generate community catalog
+      template:
+        src: files/community-catalog-resource.j2
+        dest: community-operators-manifests/community-catalog-resource.yaml
 
-    - name: create custom machineset
-      shell:  ""
+    - name: Generate Redhat catalog
+      template:
+        src: files/rh-catalog-resource.j2
+        dest: redhat-operators-manifests/rh-catalog-resource.yaml
+
+
+    - name: Patch operator hub
+      shell:
+        cmd: |
+          oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
+
+    - name: Create community resource catalog
+      shell: oc apply -f community-operators-manifests/community-catalog-resource.yaml
+
+    - name: Create Redhat resource catalog
+      shell: oc apply -f redhat-operators-manifests/rh-catalog-resource.yaml
+
+    - name: Create community image resources
+      shell: oc apply -f community-operators-manifests/imageContentSourcePolicy.yaml
+
+    - name: Create redhat image resources
+      shell: oc apply -f redhat-operators-manifests/imageContentSourcePolicy.yaml
 
 
 
