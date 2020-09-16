@@ -5,7 +5,7 @@ metadata:
   namespace: openshift-marketplace
 spec:
   displayName: Red Hat Operators
-  image: {{ local_registry }}/olm/redhat-operators:1.0.0
+  image: {{ local_registry }}/{{ local_redhat_catalog }}
   imagePullPolicy: Always
   publisher: Red Hat
   sourceType: grpc
