@@ -8,7 +8,7 @@
   tasks:
     - name: Create auth directory
       file:
-        path: {{ item }}
+        path: "{{ item }}"
         state: directory
       with_items:
         - /root/.docker
