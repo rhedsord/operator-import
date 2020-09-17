@@ -8,13 +8,21 @@
   tasks:
     - name: Create auth directory
       file:
-        path: /root/.docker
+        path: {{ item }}
         state: directory
+      with_items:
+        - /root/.docker
+        - /root/.kube
 
     - name: Create auth file
       template:
         src: templates/auth.json
         dest: /root/.docker/auth.json
+
+    - name: Create auth file
+      template:
+        src: files/kubeconfig
+        dest: /root/.kube/config
 
     - name: Create mapping.txt
       template:
