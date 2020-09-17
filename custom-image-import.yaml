@@ -16,17 +16,16 @@
         src: templates/auth.json
         dest: /root/.docker/auth.json
 
+    - name: Create mapping.txt
+      template:
+        src: templates/custom-mapping.j2
+        dest: manifests/custom-mapping.txt
+
     - name: Mirror custom catalog images
       shell: oc adm catalog mirror \
-        -a {{ quay_auth }} \
-        -f files/mapping.txt \
+        --force \
+        --filter-by-os=.* \
+        --keep-manifest-list=true \
+        --registry-config {{ quay_auth }} \
+        -f manifests/custom-custom-mapping.txt \
         --insecure
-
-    - name: Patch Operator Hub
-      shell: oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
-
-    - name: Create catalog resource
-      shell: oc apply -f custom-catalog-resource.yaml
-
-    - name: Create image resource
-      shell: oc apply -f olm-iscp.yaml

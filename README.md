@@ -26,3 +26,6 @@ Copy that file output to the templates/auth.json
 In the operator-import/vars directory change the global vars change localhost to the registry name
 
 ##Run 
+
+## Example single image mirror
+```oc image mirror --force --filter-by-os=.* --keep-manifest-list=true --registry-config /root/auth.json --insecure=true 'quay.io/projectquay/quay:qui-gon' "registry.spartaeast.spo-east.io:5000/projectquay/quay" ```
