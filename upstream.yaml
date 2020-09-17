@@ -24,6 +24,7 @@
         --to={{ local_registry }}/{{ local_redhat_catalog }} \
         -a {{ quay_auth }} \
         --insecure
+      when: Redhat
 
     - name: build community catalog
       shell: oc adm catalog build \
@@ -33,6 +34,7 @@
         --to={{ local_registry }}/{{ local_community_catalog }} \
         -a {{ quay_auth }} \
         --insecure
+      when: community
 
     - name: Mirror Redhat catalog
       shell: oc adm catalog mirror \
@@ -40,6 +42,7 @@
         {{ local_registry }} \
         -a {{ quay_auth }} \
         --insecure
+      when: Redhat
 
     - name: Mirror community catalog
       shell: oc adm catalog mirror \
@@ -47,17 +50,19 @@
         {{ local_registry }} \
         -a {{ quay_auth }} \
         --insecure
+      when: community
 
     - name: Generate community catalog
       template:
         src: files/community-catalog-resource.j2
         dest: community-operators-manifests/community-catalog-resource.yaml
+      when: community
 
     - name: Generate Redhat catalog
       template:
         src: files/rh-catalog-resource.j2
         dest: redhat-operators-manifests/rh-catalog-resource.yaml
-
+      when: Redhat
 
     - name: Patch operator hub
       shell:
@@ -66,15 +71,19 @@
 
     - name: Create community resource catalog
       shell: oc apply -f community-operators-manifests/community-catalog-resource.yaml
+      when: community
 
     - name: Create Redhat resource catalog
       shell: oc apply -f redhat-operators-manifests/rh-catalog-resource.yaml
+      when: Redhat
 
     - name: Create community image resources
       shell: oc apply -f community-operators-manifests/imageContentSourcePolicy.yaml
+      when: community
 
     - name: Create redhat image resources
       shell: oc apply -f redhat-operators-manifests/imageContentSourcePolicy.yaml
+      when: Redhat
 
 
 

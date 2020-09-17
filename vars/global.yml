@@ -6,4 +6,5 @@ local_registry: localhost:5000
 local_redhat_catalog: olm/redhat-operators:v1
 local_community_catalog: olm/community-operators:latest
 quay_auth: /root/.docker/auth.json
-
+Redhat: true
+community: true
