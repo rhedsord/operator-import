@@ -26,7 +26,7 @@ Copy that file output to the templates/auth.json
 ```
 cd  /root/deploy/secrets/cluster/auth/ 
 cat kubeconfig 
-save the output and copy that to templates/auth.json
+save the output and copy that to files/kubeconfig
 ```
 
 ##Modify vars
