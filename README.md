@@ -17,7 +17,7 @@ ssh to the registry node
 
 cd /root/deploy/secrets/docker
 
-jq -s '.[0] * .[1]' auth.json config.json > combo.json
+jq -s '.[0] * .[1]' quay.json config.json > combo.json
 
 Copy that file output to the templates/auth.json
 ```
