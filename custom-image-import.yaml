@@ -1,7 +1,7 @@
 #!/usr/local/bin/ansible-playbook --inventory=inventory
 
 - name: ' Operators '
-  hosts: local
+  hosts: localhost
   vars_files:
     - vars/global.yml
 

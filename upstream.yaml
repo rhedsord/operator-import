@@ -1,7 +1,7 @@
 #!/usr/local/bin/ansible-playbook --inventory=inventory
 
 - name: ' Operators '
-  hosts: local
+  hosts: localhost
   vars_files:
     - vars/global.yml
 
@@ -85,15 +85,42 @@
       shell: oc apply -f redhat-operators-manifests/rh-catalog-resource.yaml
       when: Redhat
 
-    - name: Create community image resources
-      shell: oc apply -f community-operators-manifests/imageContentSourcePolicy.yaml
-      when: community
+        # TODO: Uncomment when we've done more testing on these
+        #    - name: Create community image resources
+        #      shell: oc apply -f community-operators-manifests/imageContentSourcePolicy.yaml
+        #      when: community
+        #
+        #    - name: Create redhat image resources
+        #      shell: oc apply -f redhat-operators-manifests/imageContentSourcePolicy.yaml
+        #      when: Redhat
 
-    - name: Create redhat image resources
-      shell: oc apply -f redhat-operators-manifests/imageContentSourcePolicy.yaml
-      when: Redhat
 
+    - name: Encode Registry.conf
+      set_fact:
+        encoded_registry_conf: "{{ lookup('template', 'templates/registry.conf.j2') | b64encode }}"
 
+    - name: Apply MachineConfig
+      k8s:
+        definition: |-
+          apiVersion: machineconfiguration.openshift.io/v1
+          kind: MachineConfig
+          metadata:
+            name: 99-worker-z-container-registry-conf
+            labels:
+              machineconfiguration.openshift.io/role: worker
+          spec:
+            config:
+              ignition:
+                version: 2.2.0
+              storage:
+                files:
+                  - contents:
+                      source: >-
+                        data:text/plain;charset=utf-8;base64,{{ encoded_registry_conf }}
+                      verification: {}
+                    filesystem: root
+                    mode: 420
+                    path: /etc/containers/registries.conf
 
 
 
