@@ -4,6 +4,10 @@
   hosts: localhost
   vars_files:
     - vars/global.yml
+  vars_prompt:
+    - name: quay_json
+      prompt: Enter your Quay pull secret?
+      private: no
 
   tasks:
     - name: Create auth directory
@@ -14,9 +18,22 @@
         - /root/.docker
         - /root/.kube
 
-    - name: Create auth file
+    - name: Create quay secret
+      template:
+        src: templates/quay.json
+        dest: manifests/quay.json
+
+    - name: Create registry secret
       template:
         src: templates/auth.json
+        dest: manifests/local.json
+
+    - name: Create full auth chain
+      shell: "jq -s '.[0] * .[1]' manifests/local.json manifests/quay.json > manifests/auth.json"
+
+    - name: Create auth file
+      template:
+        src: manifests/auth.json
         dest: /root/.docker/auth.json
 
     - name: Create auth file
